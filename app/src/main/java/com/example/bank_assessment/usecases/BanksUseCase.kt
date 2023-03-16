@@ -4,7 +4,7 @@ import com.example.bank_assessment.data.repository.BankRepository
 import com.example.bank_assessment.model.Bank
 import javax.inject.Inject
 
-class GetBanksUseCase @Inject constructor(private val bankRepository: BankRepository) {
+class BanksUseCase @Inject constructor(private val bankRepository: BankRepository) {
 
       fun getAllBanksFromDb(): List<Bank> {
         return bankRepository.banks

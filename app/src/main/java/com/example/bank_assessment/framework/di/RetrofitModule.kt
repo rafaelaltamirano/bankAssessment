@@ -17,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitModule {
 
     @Provides
-    fun providesOkHttpClient(@ApplicationContext context: Context): OkHttpClient {
+    fun providesOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder().addInterceptor { chain: Interceptor.Chain ->
             val originalRequest = chain.request()
             chain.proceed(originalRequest)

@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bank_assessment.model.Bank
-import com.example.bank_assessment.usecases.GetBanksUseCase
+import com.example.bank_assessment.usecases.BanksUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val bankUseCase: GetBanksUseCase
+    private val bankUseCase: BanksUseCase
 ) : ViewModel() {
 
     private val _bankData = MutableLiveData<List<Bank>?>()
