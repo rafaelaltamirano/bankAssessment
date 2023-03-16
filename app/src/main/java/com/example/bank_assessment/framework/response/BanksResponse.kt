@@ -1,7 +1,7 @@
-package com.example.bank_assessment.model.dto
+package com.example.bank_assessment.framework.response
 
 import com.example.bank_assessment.model.Bank
-import com.example.bank_assessment.utils.Response
+import com.example.bank_assessment.framework.response.Response
 import com.google.gson.annotations.SerializedName
 
 data class BankResponse(

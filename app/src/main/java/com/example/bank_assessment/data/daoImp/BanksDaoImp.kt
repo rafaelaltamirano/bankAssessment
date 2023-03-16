@@ -1,6 +1,6 @@
 package com.example.bank_assessment.data.daoImp
 
-import com.example.bank_assessment.data.BankApi
+import com.example.bank_assessment.framework.api.BankApi
 import com.example.bank_assessment.data.dao.BanksDao
 import com.example.bank_assessment.model.Bank
 import com.example.bank_assessment.utils.ApiTools

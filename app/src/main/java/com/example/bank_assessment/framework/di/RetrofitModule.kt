@@ -1,7 +1,7 @@
-package com.example.bank_assessment.di
+package com.example.bank_assessment.framework.di
 
 import android.content.Context
-import com.example.bank_assessment.data.BankApi
+import com.example.bank_assessment.framework.api.BankApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

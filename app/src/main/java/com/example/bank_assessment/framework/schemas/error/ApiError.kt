@@ -1,6 +1,6 @@
 package com.example.bank_assessment.framework.schemas.error
 
-import com.example.bank_assessment.utils.Response
+import com.example.bank_assessment.framework.response.Response
 
 data class ApiError(
     val statusCode: String,
