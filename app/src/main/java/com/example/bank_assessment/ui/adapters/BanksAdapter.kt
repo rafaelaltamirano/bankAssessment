@@ -1,23 +1,30 @@
 package com.example.bank_assessment.ui.adapters
 
+import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.bank_assessment.R
 import com.example.bank_assessment.databinding.ItemBankBinding
 import com.example.bank_assessment.model.Bank
 
 
 class BanksAdapter(
     private val banks: List<Bank>,
+    private val context: Context,
 ) : RecyclerView.Adapter<BanksAdapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding: ItemBankBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(bank: Bank) {
-            val uri = Uri.parse(bank.url)
-            binding.bankImageView.setImageURI(uri)
+            Glide.with(context)
+                .load(bank.url)
+                .placeholder(R.drawable.resource_default)
+                .into( binding.bankImageView)
             binding.bankNameTextView.text = bank.bankName
             binding.bankDescriptionTextView.text = bank.description
         }

@@ -23,15 +23,8 @@ class HomeFragment : Fragment() {
     private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var banks: List<Bank>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
@@ -53,23 +46,18 @@ class HomeFragment : Fragment() {
         }
 
         homeViewModel.error.observe(viewLifecycleOwner) {
-            if (!it.isNullOrEmpty())
-                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+            if (!it.isNullOrEmpty()) Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
         }
     }
 
-
     private fun initRecyclerView() {
-        if(banks.isNotEmpty()) {
+        if (banks.isNotEmpty()) {
             binding.banksRecyclerView.apply {
-                adapter =
-                    BanksAdapter(
-                        banks
-                    )
+                adapter = BanksAdapter(
+                    banks, requireContext()
+                )
                 layoutManager = LinearLayoutManager(requireContext())
             }
         }
     }
-
-
 }
