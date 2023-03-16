@@ -1,11 +1,17 @@
 package com.example.bank_assessment.model
 
-import com.google.gson.annotations.SerializedName
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-data class Bank (
+@Entity(tableName = "banks")
+data class Bank(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val description: String,
     val age: Int,
     val url: String,
-    val bankName: String,
-)
+    val bankName: String
+) {
+    constructor(description: String, age: Int, url: String, bankName: String) :
+            this(0, description, age, url, bankName)
+}
 

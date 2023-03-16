@@ -1,16 +1,16 @@
-package com.example.bank_assessment.data.daoImp
+package com.example.bank_assessment.framework.remotesourceImp
 
+import com.example.bank_assessment.data.repository.BanksRemoteSource
 import com.example.bank_assessment.framework.api.BankApi
-import com.example.bank_assessment.data.dao.BanksDao
 import com.example.bank_assessment.model.Bank
 import com.example.bank_assessment.utils.ApiTools
 import javax.inject.Inject
 
-class BanksDaoImp @Inject constructor(
+class BanksRemoteSourceImp @Inject constructor(
     private val api: BankApi,
-) : BanksDao {
+) : BanksRemoteSource {
 
-    override suspend fun fetchBanks(): List<Bank> {
+    override suspend fun requestBankData(): List<Bank> {
         val res = api.getBanks()
         ApiTools.validateResponseOrFail(res)
         return res.body()?.map { it.toEntity() } ?: emptyList()

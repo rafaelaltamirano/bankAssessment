@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getBanksUseCase: GetBanksUseCase
+    private val bankUseCase: GetBanksUseCase
 ) : ViewModel() {
 
     private val _bankData = MutableLiveData<List<Bank>?>()
@@ -23,11 +23,24 @@ class HomeViewModel @Inject constructor(
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-    fun requestBankData() {
+    init { loadDataFromCacheOrApi() }
+
+    private fun loadDataFromCacheOrApi() {
+        val cachedBanks = loadBanksFromCache()
+        if (cachedBanks.isEmpty()) {
+            requestBankData()
+        }
+    }
+
+    private fun loadBanksFromCache() =
+        bankUseCase.getAllBanksFromDb().also { _bankData.postValue(it) }
+
+    private fun requestBankData() {
         viewModelScope.launch {
             try {
-                withContext(Dispatchers.IO) { getBanksUseCase.invoke() }
-                    .also { _bankData.postValue(it) }
+                withContext(Dispatchers.IO) { bankUseCase.getAllBanksFromApi() }.also {
+                        _bankData.postValue(it)
+                    }
             } catch (e: Exception) {
                 _error.postValue(e.message)
             }
