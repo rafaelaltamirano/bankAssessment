@@ -25,7 +25,7 @@ class HomeViewModel @Inject constructor(
 
     init { loadDataFromCacheOrApi() }
 
-    private fun loadDataFromCacheOrApi() {
+    fun loadDataFromCacheOrApi() {
         val cachedBanks = loadBanksFromCache()
         if (cachedBanks.isEmpty()) {
             requestBankData()
@@ -35,7 +35,7 @@ class HomeViewModel @Inject constructor(
     private fun loadBanksFromCache() =
         bankUseCase.getAllBanksFromDb().also { _bankData.postValue(it) }
 
-    private fun requestBankData() {
+    fun requestBankData() {
         viewModelScope.launch {
             try {
                 withContext(Dispatchers.IO) { bankUseCase.getAllBanksFromApi() }.also {
