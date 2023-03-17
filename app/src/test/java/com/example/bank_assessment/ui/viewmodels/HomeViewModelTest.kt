@@ -2,6 +2,8 @@ package com.example.bank_assessment.ui.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import com.example.bank_assessment.data.repository.BankRepository
+import com.example.bank_assessment.data.repository.BanksLocalSource
+import com.example.bank_assessment.data.repository.BanksRemoteSource
 import com.example.bank_assessment.model.Bank
 import com.example.bank_assessment.usecases.BanksUseCase
 import io.mockk.coEvery
@@ -19,14 +21,18 @@ internal class HomeViewModelTest {
     // Se crea el objeto mock del UseCase
 //    private val banksUseCase = mockk<BanksUseCase>()
 
-    // Se crea el ViewModel
+    private lateinit var BanksRemoteSource: BanksRemoteSource
+    private lateinit var BanksLocalSource: BanksLocalSource
     private lateinit var viewModel: HomeViewModel
     private lateinit var banksUseCase: BanksUseCase
-    private val bankRepository: BankRepository = mockk()
+    private lateinit var bankRepository: BankRepository
 
 
     @Before
     fun setup() {
+        BanksRemoteSource = mockk()
+        BanksLocalSource = mockk()
+        bankRepository = BankRepository(BanksRemoteSource,BanksLocalSource)
         banksUseCase = BanksUseCase(bankRepository)
         // Se inicializa el ViewModel con el objeto mock del UseCase
         viewModel = HomeViewModel(banksUseCase)
