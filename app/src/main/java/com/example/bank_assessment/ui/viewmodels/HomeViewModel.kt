@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.bank_assessment.model.Bank
 import com.example.bank_assessment.usecases.BanksUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val bankUseCase: BanksUseCase
+    private val bankUseCase: BanksUseCase,
+    private val dispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     private val _bankData = MutableLiveData<List<Bank>?>()
@@ -23,9 +25,10 @@ class HomeViewModel @Inject constructor(
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-    init { loadDataFromCacheOrApi() }
 
-    fun loadDataFromCacheOrApi() {
+    init { loadDataFromCacheOrApi()  }
+
+     fun loadDataFromCacheOrApi() {
         val cachedBanks = loadBanksFromCache()
         if (cachedBanks.isEmpty()) {
             requestBankData()
@@ -35,12 +38,13 @@ class HomeViewModel @Inject constructor(
     private fun loadBanksFromCache() =
         bankUseCase.getAllBanksFromDb().also { _bankData.postValue(it) }
 
-    fun requestBankData() {
+     fun requestBankData() {
         viewModelScope.launch {
             try {
-                withContext(Dispatchers.IO) { bankUseCase.getAllBanksFromApi() }.also {
+                withContext(dispatcher) { bankUseCase.getAllBanksFromApi() }.also {
                         _bankData.postValue(it)
                     }
+
             } catch (e: Exception) {
                 _error.postValue(e.message)
             }

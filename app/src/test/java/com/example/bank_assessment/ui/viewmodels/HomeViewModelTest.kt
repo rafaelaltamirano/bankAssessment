@@ -1,56 +1,71 @@
 package com.example.bank_assessment.ui.viewmodels
 
-import androidx.lifecycle.MutableLiveData
-import com.example.bank_assessment.data.repository.BankRepository
-import com.example.bank_assessment.data.repository.BanksLocalSource
-import com.example.bank_assessment.data.repository.BanksRemoteSource
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.bank_assessment.model.Bank
 import com.example.bank_assessment.usecases.BanksUseCase
-import io.mockk.coEvery
-import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import io.mockk.coVerify
+import io.mockk.verify
+import kotlinx.coroutines.*
+import kotlinx.coroutines.test.*
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.junit.MockitoJUnitRunner
 
-@OptIn(ExperimentalCoroutinesApi::class)
-internal class HomeViewModelTest {
 
-    // Se crea el objeto mock del UseCase
-//    private val banksUseCase = mockk<BanksUseCase>()
+@ExperimentalCoroutinesApi
+@RunWith(MockitoJUnitRunner::class)
+class HomeViewModelTest {
 
-    private lateinit var BanksRemoteSource: BanksRemoteSource
-    private lateinit var BanksLocalSource: BanksLocalSource
     private lateinit var viewModel: HomeViewModel
     private lateinit var banksUseCase: BanksUseCase
-    private lateinit var bankRepository: BankRepository
 
+    @get:Rule
+    val instantExecutorRule = InstantTaskExecutorRule()
+    @get:Rule
+    val mainCoroutinesRule =  CoroutineTestRule()
+
+    private val dispatcher: TestDispatcher = StandardTestDispatcher()
 
     @Before
     fun setup() {
-        BanksRemoteSource = mockk()
-        BanksLocalSource = mockk()
-        bankRepository = BankRepository(BanksRemoteSource,BanksLocalSource)
-        banksUseCase = BanksUseCase(bankRepository)
-        // Se inicializa el ViewModel con el objeto mock del UseCase
-        viewModel = HomeViewModel(banksUseCase)
+        Dispatchers.setMain(dispatcher)
+        banksUseCase = BanksUseCase(banksRepo)
+        viewModel = HomeViewModel(banksUseCase,dispatcher)
     }
-
     @Test
-    fun `requestBankData should update bankData when successful`() {
-        // Se crea una lista de bancos de prueba
-        val banks = listOf(Bank("Bank A", 1,"A","a"), Bank("Bank B", 1,"B","a"))
+    fun `loadDataFromCacheOrApi should request data from API when cache is empty`() =runTest {
+        val banksList = listOf(Bank("Bank A", 1,"A","a"),
+            Bank("Bank B", 1,"B","a"))
+        // Given
+         banksUseCase.getAllBanksFromDb()
+
+        // When
+        viewModel.loadDataFromCacheOrApi()
+
+        // Then
+        assertThat(banksRepo.requestBanks(), `is`(banksList))
+//        coVerify(exactly = 1) { banksRepo.requestBanks()}
+    }
+    @Test
+    fun `requestBankData should update bankData when successful`() = runTest {
+
+        val banksList = listOf(Bank("Bank A", 1,"A","a"),
+            Bank("Bank B", 1,"B","a"))
 
         // Se define el comportamiento del objeto mock del UseCase
-        coEvery { banksUseCase.getAllBanksFromApi() } returns banks
+        banksUseCase.getAllBanksFromApi()
 
         // Se llama al método a probar
         viewModel.requestBankData()
-
+        advanceUntilIdle()
         // Se comprueba que los LiveData hayan sido actualizados correctamente
-        assertThat(viewModel.bankData.value, `is`(banks))
+        assertThat(viewModel.bankData.value, `is`(banksList))
         assertThat(viewModel.error.value, `is`(nullValue()))
     }
+
 }
